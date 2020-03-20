@@ -46,7 +46,6 @@ xi_end_DS = zeros(3, n);
 xi_end_vel_DS = zeros(3, n);
 t_ds_vec = ones(1,n)*t_ds;
 t_ds_vec(1) = t_transfer + t_ds + (1-alpha)*t_ds;
-%t_ds_vec(1) = (1-alpha)*t_ds;
 P_mats = zeros(4,3,n);
 
 % Recursively find xi boundary conditions
@@ -132,6 +131,6 @@ legend({'DCM z','DCM z vel'},'Location','northeast')
 
 %---
 figure(4)
-index_to_try = 1;
+index_to_try = n;
 xi_vel_ds_poly_test = get_xi_vel_DS_poly(t, t_ds_vec(index_to_try), P_mats(:,:, index_to_try));
-plot(t, xi_vel_ds_poly_test(1,:))
+plot(t, xi_vel_ds_poly_test(2,:))
