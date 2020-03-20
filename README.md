@@ -7,3 +7,6 @@ IEEE Transactions on Robotics 31.2 (2015): 355-368.
 ```
 
 In matlab, run the file dcm_test.m to visualize the DCM trajectories
+
+The dcm_test.m MATLAB script produces the following plots:
+![DCM trajectories](https://raw.githubusercontent.com/stevenjj/dcm_matlab/master/dcm_trajectories.png)
