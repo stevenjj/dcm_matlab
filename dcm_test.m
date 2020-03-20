@@ -5,7 +5,7 @@ z = 0.75;
 b = sqrt(z/g);
 
 % Temporal Parameters
-t_transfer = 0.1; %0.3;
+t_transfer = 0.1; %0.3
 t_ss = 0.3; %0.4;
 t_ds = 0.05; %0.1;
 alpha = 0.5;
@@ -84,7 +84,8 @@ for (i = 1:n)
 end
 
 % Get DCM references ------------------------------------------------------
-t = [0:0.005:1];
+t_additional = 0.5;
+t = [0:0.005:get_trajectory_length(t_step) + t_additional];
 % Exponential DCM references
 xi_ref_d = get_xi_ref_d(t, t_step, b, r_vrp, xi_eos);
 xi_vel_ref_d = get_xi_vel_ref_d(t, t_step, b, r_vrp, xi_eos);
