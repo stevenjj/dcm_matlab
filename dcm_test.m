@@ -45,7 +45,8 @@ xi_ini_vel_DS = zeros(3, n);
 xi_end_DS = zeros(3, n);
 xi_end_vel_DS = zeros(3, n);
 t_ds_vec = ones(1,n)*t_ds;
-t_ds_vec(1) = (1-alpha)*t_ds;
+t_ds_vec(1) = t_transfer + t_ds + (1-alpha)*t_ds;
+%t_ds_vec(1) = (1-alpha)*t_ds;
 P_mats = zeros(4,3,n);
 
 % Recursively find xi boundary conditions
@@ -75,6 +76,8 @@ for(i = 1:n)
     xi_end_DS(:,i) = r_vrp(:,i) + exp((1/b)*t_ds_end)*(xi_ini(:,i) - r_vrp(:,i));
     xi_end_vel_DS(:,i) = (1/b)*exp((1/b)*t_ds_end)*(xi_ini(:,i) - r_vrp(:,i));
 end
+xi_end_DS(:,1) = xi_end_DS(:,2);
+xi_end_vel_DS(:,1) = xi_end_DS(:,2);
 
 % Compute Polynomial Matrices
 for (i = 1:n)
@@ -127,10 +130,8 @@ xlabel('time(s)')
 ylabel('dcm')
 legend({'DCM z','DCM z vel'},'Location','northeast')
 
-
-
 %---
 figure(4)
-index_to_try = n;
+index_to_try = 1;
 xi_vel_ds_poly_test = get_xi_vel_DS_poly(t, t_ds_vec(index_to_try), P_mats(:,:, index_to_try));
-plot(t, xi_vel_ds_poly_test(2,:))
+plot(t, xi_vel_ds_poly_test(1,:))
