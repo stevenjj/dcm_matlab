@@ -5,9 +5,10 @@ z = 0.75;
 b = sqrt(z/g);
 
 % Temporal Parameters
-t_transfer = 0.1; %0.3
-t_ss = 0.3; %0.4;
-t_ds = 0.05; %0.1;
+% Commented temporal params are for the DRACO biped
+t_transfer = 0.75; %0.1;
+t_ss = 1.0; %0.4; 
+t_ds = 0.25; %0.05; 
 alpha = 0.5;
 t_ds_ini = alpha*t_ds;
 t_ds_end = (1-alpha)*t_ds;
@@ -85,7 +86,7 @@ end
 
 % Get DCM references ------------------------------------------------------
 t_additional = 0.5;
-t = [0:0.005:get_trajectory_length(t_step) + t_additional];
+t = [0:0.01:get_trajectory_length(t_step) + t_additional];
 % Exponential DCM references
 xi_ref_d = get_xi_ref_d(t, t_step, b, r_vrp, xi_eos);
 xi_vel_ref_d = get_xi_vel_ref_d(t, t_step, b, r_vrp, xi_eos);
@@ -99,9 +100,10 @@ r_vrp_cont = compute_rvrp_given_dcm(b, xi_ref_hybrid_d, xi_vel_ref_hybrid_d);
 
 % Set index to plot
 figure(1)
+subplot(2,3,1)
 hold on
-plot(t, xi_ref_hybrid_d(1,:));
-plot(t, xi_vel_ref_hybrid_d(1,:));
+plot(t, xi_ref_hybrid_d(1,:),'s-');
+plot(t, xi_vel_ref_hybrid_d(1,:),'s-');
 scatter(t, xi_ref_d(1,:))
 scatter(t, xi_vel_ref_d(1,:));
 t_start = 0.0;
@@ -113,10 +115,11 @@ xlabel('time(s)')
 ylabel('dcm')
 legend({'DCM poly x','DCM poly x vel', 'DCM x','DCM x vel'},'Location','northeast')
 
-figure(2)
+%figure(2)
+subplot(2,3,2)
 hold on
-plot(t, xi_ref_hybrid_d(2,:));
-plot(t, xi_vel_ref_hybrid_d(2,:));
+plot(t, xi_ref_hybrid_d(2,:),'s-');
+plot(t, xi_vel_ref_hybrid_d(2,:),'s-');
 scatter(t, xi_ref_d(2,:))
 scatter(t, xi_vel_ref_d(2,:));
 t_start = 0.0;
@@ -128,10 +131,11 @@ xlabel('time(s)')
 ylabel('dcm')
 legend({'DCM poly y','DCM poly y vel', 'DCM y','DCM y vel'},'Location','southeast')
 
-figure(3)
+%figure(3)
+subplot(2,3,3)
 hold on
-plot(t, xi_ref_hybrid_d(3,:));
-plot(t, xi_vel_ref_hybrid_d(3,:));
+plot(t, xi_ref_hybrid_d(3,:),'s-');
+plot(t, xi_vel_ref_hybrid_d(3,:),'s-');
 scatter(t, xi_ref_d(3,:))
 scatter(t, xi_vel_ref_d(3,:));
 t_start = 0.0;
@@ -143,15 +147,18 @@ xlabel('time(s)')
 ylabel('dcm')
 legend({'DCM poly z','DCM poly z vel', 'DCM z','DCM z vel'},'Location','east')
 
-figure(4)
+%figure(4)
+subplot(2,3,4)
 hold on
 scatter(r_vrp_disc(1,:), r_vrp_disc(2,:))
 plot(r_vrp_cont(1,:), r_vrp_cont(2,:))
-xlabel('r ecmp x (m)')
-ylabel('r ecmp y (m)')
-legend({'r ecmp x','r ecmp y'},'Location','northeast')
+plot(xi_ref_hybrid_d(1,:), xi_ref_hybrid_d(2,:), 's-')
+xlabel('x (m)')
+ylabel('y (m)')
+legend({'r ecmp xy disc','r ecmp xy cont', 'dcm cont'},'Location','northeast')
 
-figure(5)
+%figure(5)
+subplot(2,3,5)
 hold on
 scatter(t, r_vrp_disc(1,:))
 plot(t, r_vrp_cont(1,:))
@@ -159,7 +166,8 @@ xlabel('time(s)')
 ylabel('r ecmp x (m)')
 legend({'discontinuous','continuous'},'Location','northeast')
 
-figure(6)
+%figure(6)
+subplot(2,3,6)
 hold on
 scatter(t, r_vrp_disc(2,:))
 plot(t, r_vrp_cont(2,:))
