@@ -36,8 +36,8 @@ r_vrp(:,4) = [1, midfeet_y, z];
 % Initialize t_step
 t_step(:,1) = t_transfer + t_ds;
 t_step(:,2) = t_ss + t_ds;
-t_step(:,3) = t_ss + t_ds + (1-alpha)*t_ds;
-t_step(:,4) = 0.0;
+t_step(:,3) = t_ss + t_ds;
+t_step(:,4) = (1-alpha)*t_ds; 
 
 % Polynomial Vectors
 xi_ini_DS = zeros(3, n);
@@ -84,7 +84,7 @@ for (i = 1:n)
 end
 
 % Get DCM references ------------------------------------------------------
-t = [0:0.01:1];
+t = [0:0.005:1];
 % Exponential DCM references
 xi_ref_d = get_xi_ref_d(t, t_step, b, r_vrp, xi_eos);
 xi_vel_ref_d = get_xi_vel_ref_d(t, t_step, b, r_vrp, xi_eos);
@@ -138,7 +138,6 @@ end
 xlabel('time(s)')
 ylabel('dcm')
 legend({'DCM poly z','DCM poly z vel', 'DCM z','DCM z vel'},'Location','northeast')
-
 
 %---
 %figure(4)
