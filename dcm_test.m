@@ -76,7 +76,7 @@ for(i = 1:n)
     xi_end_vel_DS(:,i) = (1/b)*exp((1/b)*t_ds_end)*(xi_ini(:,i) - r_vrp(:,i));
 end
 xi_end_DS(:,1) = xi_end_DS(:,2);
-xi_end_vel_DS(:,1) = xi_end_DS(:,2);
+xi_end_vel_DS(:,1) = xi_end_vel_DS(:,2);
 
 % Compute Polynomial Matrices
 for (i = 1:n)
@@ -84,14 +84,20 @@ for (i = 1:n)
 end
 
 % Get DCM references ------------------------------------------------------
-t = [0:0.005:1];
+t = [0:0.01:1];
 % Exponential DCM references
 xi_ref_d = get_xi_ref_d(t, t_step, b, r_vrp, xi_eos);
 xi_vel_ref_d = get_xi_vel_ref_d(t, t_step, b, r_vrp, xi_eos);
 
+% Exponential and Polynomial DCM references
+xi_ref_hybrid_d = get_xi_ref_hybrid_d(t, t_step, b, r_vrp, xi_eos, t_ds_vec, alpha, P_mats);
+xi_vel_ref_hybrid_d = get_xi_vel_ref_hybrid_d(t, t_step, b, r_vrp, xi_eos, t_ds_vec, alpha, P_mats);
+
 % Set index to plot
 figure(1)
 hold on
+plot(t, xi_ref_hybrid_d(1,:));
+plot(t, xi_vel_ref_hybrid_d(1,:));
 scatter(t, xi_ref_d(1,:))
 scatter(t, xi_vel_ref_d(1,:));
 t_start = 0.0;
@@ -101,36 +107,41 @@ for(i = 1:size(t_step,2))
 end
 xlabel('time(s)')
 ylabel('dcm')
-legend({'DCM x','DCM x vel'},'Location','northeast')
+legend({'DCM poly x','DCM poly x vel', 'DCM x','DCM x vel'},'Location','northeast')
 
 figure(2)
 hold on
-t_start = 0.0;
+plot(t, xi_ref_hybrid_d(2,:));
+plot(t, xi_vel_ref_hybrid_d(2,:));
 scatter(t, xi_ref_d(2,:))
 scatter(t, xi_vel_ref_d(2,:));
+t_start = 0.0;
 for(i = 1:size(t_step,2))
     xline(t_start);
     t_start = t_start + t_step(i);
 end
 xlabel('time(s)')
 ylabel('dcm')
-legend({'DCM y','DCM y vel'},'Location','northeast')
+legend({'DCM poly y','DCM poly y vel', 'DCM y','DCM y vel'},'Location','southeast')
 
 figure(3)
 hold on
-t_start = 0.0;
+plot(t, xi_ref_hybrid_d(3,:));
+plot(t, xi_vel_ref_hybrid_d(3,:));
 scatter(t, xi_ref_d(3,:))
 scatter(t, xi_vel_ref_d(3,:));
+t_start = 0.0;
 for(i = 1:size(t_step,2))
     xline(t_start);
     t_start = t_start + t_step(i);
 end
 xlabel('time(s)')
 ylabel('dcm')
-legend({'DCM z','DCM z vel'},'Location','northeast')
+legend({'DCM poly z','DCM poly z vel', 'DCM z','DCM z vel'},'Location','northeast')
+
 
 %---
-figure(4)
-index_to_try = n;
-xi_vel_ds_poly_test = get_xi_vel_DS_poly(t, t_ds_vec(index_to_try), P_mats(:,:, index_to_try));
-plot(t, xi_vel_ds_poly_test(2,:))
+%figure(4)
+%index_to_try = n;
+%xi_vel_ds_poly_test = get_xi_vel_DS_poly(t, t_ds_vec(index_to_try), P_mats(:,:, index_to_try));
+%plot(t, xi_vel_ds_poly_test(2,:))

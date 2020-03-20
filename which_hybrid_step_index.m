@@ -7,7 +7,13 @@ t_input = max(min(t_input, t_trajectory_length), 0.0);
 for(i = 1:size(t_step,2))
     if (i < size(t_step,2))
         t_ds_step_start = get_DS_start_time(i, t_step, t_ds_vec, alpha);
-        t_step_end = get_DS_start_time(i+1, t_step, t_ds_vec, alpha);
+        t_step_end = get_DS_start_time(i+1, t_step, t_ds_vec, alpha);        
+        
+        % Use a unique ending condition for the first step
+        if (i == 1)
+            t_step_end = get_DS_end_time(i, t_step, t_ds_vec, alpha);
+        end
+        
         if (t_ds_step_start <= t_input) && (t_input < t_step_end)
            step_index = i;
            return
