@@ -13,6 +13,11 @@ alpha = 0.5;
 t_ds_ini = alpha*t_ds;
 t_ds_end = (1-alpha)*t_ds;
 
+% Set exponential settle time (so that when CoM is computed, it converges to
+% the final DCM state)
+percentage_settle = 0.99;
+t_settle = -b*log(1.0 - percentage_settle);  
+
 % Initialize foot conditions
 rfoot_y = -0.33;
 lfoot_y = 0.0;
@@ -85,8 +90,7 @@ for (i = 1:n)
 end
 
 % Get DCM references ------------------------------------------------------
-t_additional = 0.5;
-t = [0:0.01:get_trajectory_length(t_step) + t_additional];
+t = [0:0.01:get_trajectory_length(t_step) + t_settle];
 % Exponential DCM references
 xi_ref_d = get_xi_ref_d(t, t_step, b, r_vrp, xi_eos);
 xi_vel_ref_d = get_xi_vel_ref_d(t, t_step, b, r_vrp, xi_eos);
