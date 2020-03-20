@@ -5,9 +5,9 @@ z = 0.75;
 b = sqrt(z/g);
 
 % Temporal Parameters
-t_transfer = 0.1;
-t_ss = 0.3;
-t_ds = 0.05;
+t_transfer = 0.1; %0.3;
+t_ss = 0.3; %0.4;
+t_ds = 0.05; %0.1;
 alpha = 0.5;
 t_ds_ini = alpha*t_ds;
 t_ds_end = (1-alpha)*t_ds;
@@ -93,6 +93,9 @@ xi_vel_ref_d = get_xi_vel_ref_d(t, t_step, b, r_vrp, xi_eos);
 xi_ref_hybrid_d = get_xi_ref_hybrid_d(t, t_step, b, r_vrp, xi_eos, t_ds_vec, alpha, P_mats);
 xi_vel_ref_hybrid_d = get_xi_vel_ref_hybrid_d(t, t_step, b, r_vrp, xi_eos, t_ds_vec, alpha, P_mats);
 
+r_vrp_disc = compute_rvrp_given_dcm(b, xi_ref_d, xi_vel_ref_d);
+r_vrp_cont = compute_rvrp_given_dcm(b, xi_ref_hybrid_d, xi_vel_ref_hybrid_d);
+
 % Set index to plot
 figure(1)
 hold on
@@ -137,7 +140,32 @@ for(i = 1:size(t_step,2))
 end
 xlabel('time(s)')
 ylabel('dcm')
-legend({'DCM poly z','DCM poly z vel', 'DCM z','DCM z vel'},'Location','northeast')
+legend({'DCM poly z','DCM poly z vel', 'DCM z','DCM z vel'},'Location','east')
+
+figure(4)
+hold on
+scatter(r_vrp_disc(1,:), r_vrp_disc(2,:))
+plot(r_vrp_cont(1,:), r_vrp_cont(2,:))
+xlabel('r ecmp x (m)')
+ylabel('r ecmp y (m)')
+legend({'r ecmp x','r ecmp y'},'Location','northeast')
+
+figure(5)
+hold on
+scatter(t, r_vrp_disc(1,:))
+plot(t, r_vrp_cont(1,:))
+xlabel('time(s)')
+ylabel('r ecmp x (m)')
+legend({'discontinuous','continuous'},'Location','northeast')
+
+figure(6)
+hold on
+scatter(t, r_vrp_disc(2,:))
+plot(t, r_vrp_cont(2,:))
+xlabel('time(s)')
+ylabel('r ecmp y (m)')
+legend({'discontinuous','continuous'},'Location','northeast')
+
 
 %---
 %figure(4)

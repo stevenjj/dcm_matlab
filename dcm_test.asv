@@ -37,7 +37,7 @@ r_vrp(:,4) = [1, midfeet_y, z];
 t_step(:,1) = t_transfer + t_ds;
 t_step(:,2) = t_ss + t_ds;
 t_step(:,3) = t_ss + t_ds;
-t_step(:,4) = 0.0;
+t_step(:,4) = (1-alpha)*t_ds; 
 
 % Polynomial Vectors
 xi_ini_DS = zeros(3, n);
@@ -45,8 +45,7 @@ xi_ini_vel_DS = zeros(3, n);
 xi_end_DS = zeros(3, n);
 xi_end_vel_DS = zeros(3, n);
 t_ds_vec = ones(1,n)*t_ds;
-t_ds_vec(1) = (1-alpha)*t_ds;
-%t_ds_vec(n) = (alpha)*t_ds;
+t_ds_vec(1) = t_transfer + t_ds + (1-alpha)*t_ds;
 P_mats = zeros(4,3,n);
 
 % Recursively find xi boundary conditions
@@ -76,6 +75,8 @@ for(i = 1:n)
     xi_end_DS(:,i) = r_vrp(:,i) + exp((1/b)*t_ds_end)*(xi_ini(:,i) - r_vrp(:,i));
     xi_end_vel_DS(:,i) = (1/b)*exp((1/b)*t_ds_end)*(xi_ini(:,i) - r_vrp(:,i));
 end
+xi_end_DS(:,1) = xi_end_DS(:,2);
+xi_end_vel_DS(:,1) = xi_end_vel_DS(:,2);
 
 % Compute Polynomial Matrices
 for (i = 1:n)
@@ -88,9 +89,18 @@ t = [0:0.005:1];
 xi_ref_d = get_xi_ref_d(t, t_step, b, r_vrp, xi_eos);
 xi_vel_ref_d = get_xi_vel_ref_d(t, t_step, b, r_vrp, xi_eos);
 
+% Exponential and Polynomial DCM references
+xi_ref_hybrid_d = get_xi_ref_hybrid_d(t, t_step, b, r_vrp, xi_eos, t_ds_vec, alpha, P_mats);
+xi_vel_ref_hybrid_d = get_xi_vel_ref_hybrid_d(t, t_step, b, r_vrp, xi_eos, t_ds_vec, alpha, P_mats);
+
+r_vrp_disc = compute_rvrp_given_dcm(b, xi_ref_d, xi_vel_ref_d);
+r_vrp_cont = compute_rvrp_given_dcm(b, xi_ref_hybrid_d, xi_vel_ref_hybrid_d);
+
 % Set index to plot
 figure(1)
 hold on
+plot(t, xi_ref_hybrid_d(1,:));
+plot(t, xi_vel_ref_hybrid_d(1,:));
 scatter(t, xi_ref_d(1,:))
 scatter(t, xi_vel_ref_d(1,:));
 t_start = 0.0;
@@ -100,38 +110,44 @@ for(i = 1:size(t_step,2))
 end
 xlabel('time(s)')
 ylabel('dcm')
-legend({'DCM x','DCM x vel'},'Location','northeast')
+legend({'DCM poly x','DCM poly x vel', 'DCM x','DCM x vel'},'Location','northeast')
 
 figure(2)
 hold on
-t_start = 0.0;
+plot(t, xi_ref_hybrid_d(2,:));
+plot(t, xi_vel_ref_hybrid_d(2,:));
 scatter(t, xi_ref_d(2,:))
 scatter(t, xi_vel_ref_d(2,:));
+t_start = 0.0;
 for(i = 1:size(t_step,2))
     xline(t_start);
     t_start = t_start + t_step(i);
 end
 xlabel('time(s)')
 ylabel('dcm')
-legend({'DCM y','DCM y vel'},'Location','northeast')
+legend({'DCM poly y','DCM poly y vel', 'DCM y','DCM y vel'},'Location','southeast')
 
 figure(3)
 hold on
-t_start = 0.0;
+plot(t, xi_ref_hybrid_d(3,:));
+plot(t, xi_vel_ref_hybrid_d(3,:));
 scatter(t, xi_ref_d(3,:))
 scatter(t, xi_vel_ref_d(3,:));
+t_start = 0.0;
 for(i = 1:size(t_step,2))
     xline(t_start);
     t_start = t_start + t_step(i);
 end
 xlabel('time(s)')
 ylabel('dcm')
-legend({'DCM z','DCM z vel'},'Location','northeast')
+legend({'DCM poly z','DCM poly z vel', 'DCM z','DCM z vel'},'Location','northeast')
 
-
+figure(4)
+hold on
+plot(r_vrp_disc(1,:), r_vrp_disc(:,2))
 
 %---
-figure(4)
-index_to_try = 1;
-xi_vel_ds_poly_test = get_xi_vel_DS_poly(t, t_ds_vec(index_to_try), P_mats(:,:, index_to_try));
-plot(t, xi_vel_ds_poly_test(2,:))
+%figure(4)
+%index_to_try = n;
+%xi_vel_ds_poly_test = get_xi_vel_DS_poly(t, t_ds_vec(index_to_try), P_mats(:,:, index_to_try));
+%plot(t, xi_vel_ds_poly_test(2,:))
